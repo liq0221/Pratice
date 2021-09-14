@@ -27,6 +27,26 @@ public class ListNode {
         }
         size++;
     }
+    public Node remove(int index) {
+
+        Node temp = head;
+        if (index == 0) {
+            head = head.next;
+        } else if (size == index) {
+            Node newLastNode = get(size - 1);
+            newLastNode.next = null;
+            temp = last;
+        } else {
+            Node preNode = get(index - 1);
+            Node deleteNode = preNode.next;
+            Node nextNode = deleteNode.next;
+            preNode.next = nextNode;
+            temp = deleteNode;
+        }
+        size--;
+        return temp;
+
+    }
 
     private Node get(int index) {
         int i = 0;
