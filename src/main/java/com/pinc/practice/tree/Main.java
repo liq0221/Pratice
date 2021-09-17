@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         // new Integer[]{3,2,9,null,null,10,null,null,8,null,4,}
         LinkedList<Integer> inputList = new LinkedList<Integer>(
-                Arrays.asList(new Integer[]{3,2,9,null,null,10,null,null,8,null,4,}));
+                Arrays.asList(new Integer[]{3,2,9,null,null,10,null,null,8,null,4}));
         BinaryTree binaryTree = new BinaryTree();
         BinaryTree.TreeNode treeNode = binaryTree.createTree(inputList);
         System.out.println("=======前序遍历(递归实现)=======");
