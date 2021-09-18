@@ -23,5 +23,7 @@ public class Main {
         binaryTree.midOrderTravel_stack(treeNode);
         System.out.println("=======后序遍历(栈实现)=======");
         binaryTree.postOrderTravel_stack(treeNode);
+        System.out.println("=======层序遍历(队列实现)=======");
+        binaryTree.levelOrderTravel_queue(treeNode);
     }
 }

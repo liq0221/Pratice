@@ -1,7 +1,9 @@
 package com.pinc.practice.tree;
 
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class BinaryTree {
 
@@ -131,6 +133,26 @@ public class BinaryTree {
             root = stack2.pop();
             System.out.println(root.data);
         }
+    }
+
+    /**
+     * 层序遍历(队列实现)
+     * @param treeNode
+     */
+    public void levelOrderTravel_queue(TreeNode treeNode) {
+        Queue<TreeNode> queue = new LinkedBlockingQueue<>();
+        queue.offer(treeNode);
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            System.out.println(node.data);
+            if (node.left != null) {
+                queue.offer(node.left);
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
+            }
+        }
+
     }
 
     public static class TreeNode {
