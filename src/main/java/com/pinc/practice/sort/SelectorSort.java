@@ -1,5 +1,9 @@
 package com.pinc.practice.sort;
 
+/**
+ * 选择排序
+ * 时间复杂度O(N²)
+ */
 public class SelectorSort extends Sort{
 
     private int[] arr;

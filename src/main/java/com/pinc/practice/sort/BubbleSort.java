@@ -1,5 +1,9 @@
 package com.pinc.practice.sort;
 
+/**
+ * 冒泡排序
+ * 时间复杂度O(N²)
+ */
 public class BubbleSort extends Sort{
 
     private int[] arr;

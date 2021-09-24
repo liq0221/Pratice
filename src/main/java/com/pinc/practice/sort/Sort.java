@@ -24,6 +24,20 @@ public abstract class Sort {
         arr[i] = arr[i] ^ arr[j];
     }
 
+    public void swap(int[] _arr, int i, int j) {
+        int temp = _arr[i];
+        _arr[i] = _arr[j];
+        _arr[j] = temp;
+        // 例：arr[i] = 甲 arr[j] = 乙
+        // arr[i] = 甲 ^ 乙
+        // arr[j] = 甲 ^ 乙 ^ 乙 = 甲
+        // arr[i] = 甲 ^ 乙 ^ 甲 = 乙
+        // ^(异或)：同位相加不进位
+//        _arr[i] = _arr[i] ^ _arr[j];
+//        _arr[j] = _arr[i] ^ _arr[j];
+//        _arr[i] = _arr[i] ^ _arr[j];
+    }
+
     public void output() {
         for (int a : arr) {
             System.out.print(a + " ");

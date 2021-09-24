@@ -1,6 +1,10 @@
 package com.pinc.practice.sort;
 
-
+/**
+ * 归并排序
+ * 时间复杂度O(N*logN)
+ * 满足递归程序计算时间复杂度的公式 logba == n^d
+ */
 public class MergeSort{
 
     public static void process(int[] arr, int L, int R) {

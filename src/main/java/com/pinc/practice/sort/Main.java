@@ -12,9 +12,13 @@ public class Main {
 //        Sort s1 = new BubbleSort(arr);
 //        s1.sort();
 //        s1.output();
-        System.out.println("============插入排序============");
-        Sort s2 = new BubbleSort(arr);
-        s2.sort();
-        s2.output();
+//        System.out.println("============插入排序============");
+//        Sort s2 = new InsertSort(arr);
+//        s2.sort();
+//        s2.output();
+        System.out.println("============快速排序============");
+        Sort s3 = new QuickSort(arr);
+        s3.sort();
+        s3.output();
     }
 }

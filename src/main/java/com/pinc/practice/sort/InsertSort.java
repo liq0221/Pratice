@@ -1,5 +1,9 @@
 package com.pinc.practice.sort;
 
+/**
+ * 插入排序
+ * 时间复杂度O(N²)
+ */
 public class InsertSort extends Sort{
 
     private int[] arr;
