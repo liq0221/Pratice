@@ -16,9 +16,16 @@ public class Main {
 //        Sort s2 = new InsertSort(arr);
 //        s2.sort();
 //        s2.output();
-        System.out.println("============快速排序============");
-        Sort s3 = new QuickSort(arr);
-        s3.sort();
-        s3.output();
+//        System.out.println("============快速排序============");
+//        Sort s3 = new QuickSort(arr);
+//        s3.sort();
+//        s3.output();
+        System.out.println("============堆排序============");
+        MyHeap s3 = new MyHeap(1);
+        s3.heapSort(arr);
+        for (int a : arr) {
+            System.out.print(a + " ");
+        }
+        System.out.println();
     }
 }
