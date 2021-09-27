@@ -20,12 +20,23 @@ public class Main {
 //        Sort s3 = new QuickSort(arr);
 //        s3.sort();
 //        s3.output();
-        System.out.println("============堆排序============");
-        MyHeap s3 = new MyHeap(1);
-        s3.heapSort(arr);
-        for (int a : arr) {
+//        System.out.println("============堆排序============");
+//        MyHeap s3 = new MyHeap(1);
+//        s3.heapSort(arr);
+//        for (int a : arr) {
+//            System.out.print(a + " ");
+//        }
+//        System.out.println();
+//         System.out.println("============计数排序============");
+//         Sort s4 = new CountSort(arr);
+//         s4.sort();
+//         s4.output();
+          System.out.println("============基数排序============");
+          RadixSort s4 = new RadixSort();
+          s4.radixSort(arr);
+          for (int a : arr) {
             System.out.print(a + " ");
-        }
-        System.out.println();
+          }
     }
+
 }
