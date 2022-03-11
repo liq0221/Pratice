@@ -7,7 +7,7 @@ package com.pinc.practice.problem.array;
 public class MajorityElement {
 
     public static void main(String[] args) {
-
+        System.out.println(solution(new int[]{1,1,1,1,2,2,2,3,3,4}));
     }
 
     public static int solution(int[] nums) {
@@ -17,7 +17,7 @@ public class MajorityElement {
                 major = num;
                 cnt = 1;
             } else {
-                major = major == num ? 1 : -1;
+                cnt += (major == num ? 1 : -1);
             }
         }
         return major;
