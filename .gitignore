@@ -1,38 +1,48 @@
-#idea与myeclipse配置文件全部排除
-*.class
+# system ignore
+.DS_Store
+Thumbs.db
+src/main/resources/application.properties
 
-#package file
+# maven ignore
+target
+*.jar
 *.war
-*.ear
+*.zip
+*.tar
+*.tar.gz
+!.mvn/wrapper/maven-wrapper.jar
 
-#kdiff3 ignore
-*.orig
-
-#maven ignore
-target/
-
-#eclipse ignore
-.settings/
-.project
+# sts ignore
+.apt_generated
 .classpath
+.factorypath
+.settings
+.springBeans
+.project
 
-#idea
-.idea/
-/idea/
-*.ipr
-*.iml
+# idea ignore
+.idea
 *.iws
+*.iml
+*.ipr
 
-#temp file
+## netbeans ignore
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# temp ignore
 *.log
 *.cache
 *.diff
 *.patch
 *.tmp
 
-#system ignore
-.DS_Store
-Thumbs.db
+# bin ignore
+bin
 
-#svn ignore
-.svn/
+# logs ignore
+logs

@@ -1,8 +1,14 @@
 package com.pinc.springframework.beans.factory.support;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.pinc.springframework.beans.BeansException;
+import com.pinc.springframework.beans.PropertyValue;
+import com.pinc.springframework.beans.PropertyValues;
 import com.pinc.springframework.beans.factory.config.BeanDefinition;
+import com.pinc.springframework.beans.factory.config.BeanReference;
+import org.springframework.beans.BeanUtils;
 
+import java.lang.ref.Reference;
 import java.lang.reflect.Constructor;
 
 /***
@@ -18,11 +24,40 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Object bean = null;
         try {
           bean = createBeanInstance(beanDefinition, beanName, args);
+          // 给bean填充属性
+          applyBeanPropertyValues(beanName, bean, beanDefinition);
         } catch (Exception e) {
             throw new BeansException("Instantiation of bean failed", e);
         }
         addSingleton(beanName, bean);
         return bean;
+    }
+
+    /**
+     * 为bean填充属性
+     * @param beanName
+     * @param bean
+     * @param beanDefinition
+     */
+    protected void applyBeanPropertyValues(String beanName, Object bean, BeanDefinition beanDefinition) {
+        try {
+            PropertyValues propertyValues = beanDefinition.getPropertyValues();
+            if (null == propertyValues) {
+                return;
+            }
+            for (PropertyValue propertyValue : propertyValues.getPropertyValues()) {
+                String name = propertyValue.getName();
+                Object value = propertyValue.getValue();
+                // 如果遇到的propertyValue是BeanReference对象，需要递归处理完bean实例
+                if (value instanceof BeanReference) {
+                    BeanReference beanReference = (BeanReference) value;
+                    value = getBean(beanReference.getBeanName());
+                }
+                BeanUtil.setFieldValue(bean, name, value);
+            }
+        } catch (Exception e) {
+            throw new BeansException("Error setting property values：" + beanName);
+        }
     }
 
     protected Object createBeanInstance(BeanDefinition beanDefinition, String beanName, Object[] args) {
