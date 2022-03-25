@@ -1,5 +1,7 @@
 package com.pinc.springframework.beans.factory.support;
 
+import com.pinc.springframework.beans.factory.config.SingletonBeanRegistry;
+
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.pinc.springframework.beans.factory.support;
+package com.pinc.springframework.beans.factory.config;
 
 /**
  * 单例注册接口
