@@ -6,6 +6,7 @@ import com.pinc.springframework.beans.factory.config.BeanDefinition;
 import com.pinc.springframework.beans.factory.config.BeanReference;
 import com.pinc.springframework.beans.factory.support.DefaultListableBeanFactory;
 import com.pinc.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import com.pinc.springframework.context.support.ClassPathXmlApplicationContext;
 import com.pinc.springframework.core.io.DefaultResourceLoader;
 import com.pinc.springframework.core.io.Resource;
 import com.pinc.springframework.core.io.ResourceLoader;
@@ -24,7 +25,7 @@ public class Test {
         beanFactory.registryBeanDefinition("userService", beanDefinition);
 
         UserService userService = (UserService) beanFactory.getBean("userService");
-        userService.queryUser();
+//        userService.queryUser();
 
     }
 
@@ -69,5 +70,13 @@ public class Test {
 
         UserService1 userService = (UserService1) beanFactory.getBean("userService", UserService1.class);
         userService.queryUser();
+    }
+
+    @org.junit.jupiter.api.Test
+    public void test_postProcessor() {
+        ClassPathXmlApplicationContext classPathXmlApplicationContext =
+                new ClassPathXmlApplicationContext("classpath:springPostProcessor.xml");
+        UserService userService = (UserService)classPathXmlApplicationContext.getBean("userService");
+        userService.queryUserInfo();
     }
 }

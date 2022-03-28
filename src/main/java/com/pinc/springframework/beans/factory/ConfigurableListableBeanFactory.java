@@ -3,6 +3,7 @@ package com.pinc.springframework.beans.factory;
 import com.pinc.springframework.beans.BeansException;
 import com.pinc.springframework.beans.factory.config.AutoWireCapableBeanFactory;
 import com.pinc.springframework.beans.factory.config.BeanDefinition;
+import com.pinc.springframework.beans.factory.config.BeanPostProcessor;
 import com.pinc.springframework.beans.factory.config.ConfigurableBeanFactory;
 
 /**
@@ -11,4 +12,8 @@ import com.pinc.springframework.beans.factory.config.ConfigurableBeanFactory;
 public interface ConfigurableListableBeanFactory extends ListableBeanFactory, AutoWireCapableBeanFactory, ConfigurableBeanFactory {
 
     BeanDefinition getBeanDefinition(String beanName) throws BeansException;
+
+    void addBeanPostProcessors(BeanPostProcessor beanPostProcessor);
+
+    void preInstantiateSingletons();
 }

@@ -1,25 +1,50 @@
 package com.pinc.springframework.beans;
 
+/**
+ * 博客：https://bugstack.cn - 沉淀、分享、成长，让自己和他人都能有所收获！
+ * 公众号：bugstack虫洞栈
+ * Create by 小傅哥(fustack)
+ */
 public class UserService {
 
-    private String userName;
+    private String uId;
+    private String company;
+    private String location;
+    private UserDao userDao;
 
-    public UserService() {
+    public String queryUserInfo() {
+        return userDao.queryUserName(uId) + "," + company + "," + location;
     }
 
-    public UserService(String userName) {
-        this.userName = userName;
+    public String getuId() {
+        return uId;
     }
 
-    public String getUserName() {
-        return userName;
+    public void setuId(String uId) {
+        this.uId = uId;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public String getCompany() {
+        return company;
     }
 
-    public void queryUser() {
-        System.out.println("该用户为：" + userName);
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 }
