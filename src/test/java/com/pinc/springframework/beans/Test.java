@@ -3,6 +3,7 @@ package com.pinc.springframework.beans;
 import cn.hutool.core.io.FastByteArrayOutputStream;
 import cn.hutool.core.io.IoUtil;
 import com.pinc.springframework.beans.factory.config.BeanDefinition;
+import com.pinc.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import com.pinc.springframework.beans.factory.config.BeanReference;
 import com.pinc.springframework.beans.factory.support.DefaultListableBeanFactory;
 import com.pinc.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -77,6 +78,6 @@ public class Test {
         ClassPathXmlApplicationContext classPathXmlApplicationContext =
                 new ClassPathXmlApplicationContext("classpath:springPostProcessor.xml");
         UserService userService = (UserService)classPathXmlApplicationContext.getBean("userService");
-        userService.queryUserInfo();
+        System.out.println(userService.queryUserInfo());
     }
 }
