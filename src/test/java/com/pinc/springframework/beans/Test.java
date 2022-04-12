@@ -80,4 +80,15 @@ public class Test {
         UserService userService = (UserService)classPathXmlApplicationContext.getBean("userService");
         System.out.println(userService.queryUserInfo());
     }
+
+    @org.junit.jupiter.api.Test
+    public void test_initAndDestroy() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-init-destroy.xml");
+        applicationContext.registryShutdownHook();
+
+        UserService2 userService = applicationContext.getBean("userService", UserService2.class);
+        String info = userService.queryUserInfo();
+        System.out.println("执行结果" + info);
+
+    }
 }

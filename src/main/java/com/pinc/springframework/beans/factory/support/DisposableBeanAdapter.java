@@ -26,7 +26,7 @@ public class DisposableBeanAdapter implements DisposableBean {
         if (bean instanceof DisposableBean) {
             ((DisposableBean) bean).destroy();
         }
-        if (StrUtil.isNotBlank(destroyMethodName) || !(bean instanceof DisposableBean
+        if (StrUtil.isNotBlank(destroyMethodName) && !(bean instanceof DisposableBean
                 && "destroy".equals(destroyMethodName))) {
             Method method = bean.getClass().getMethod(destroyMethodName);
             if (null == method) {

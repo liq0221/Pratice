@@ -83,6 +83,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             String id = bean.getAttribute("id");
             String name = bean.getAttribute("name");
             String className = bean.getAttribute("class");
+            String initMethodName = bean.getAttribute("init-method");
+            String destroyMethodName = bean.getAttribute("destroy-method");
             // 获取class, 方便取类的名称
             Class<?> aClass = Class.forName(className);
             String beanName = StrUtil.isEmpty(id) ? name : id;
@@ -91,6 +93,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             }
             // 定义bean
             BeanDefinition beanDefinition = new BeanDefinition(aClass);
+            beanDefinition.setInitMethodName(initMethodName);
+            beanDefinition.setDestroyMethodName(destroyMethodName);
             for (int j = 0; j < bean.getChildNodes().getLength(); j++) {
                 if (!(bean.getChildNodes().item(j) instanceof Element)) {
                     continue;
@@ -103,10 +107,12 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 String attrName = property.getAttribute("name");
                 String attrValue = property.getAttribute("value");
                 String ref = property.getAttribute("ref");
+
                 // 填充属性
                 Object value = StrUtil.isEmpty(ref) ? attrValue : new BeanReference(ref);
                 PropertyValue propertyValue = new PropertyValue(attrName, value);
                 beanDefinition.getPropertyValues().addPropertyValue(propertyValue);
+
             }
             if (getRegistry().containsBeanDefinition(beanName)) {
                 throw new BeansException("Duplicate beanName[" + beanName + "] is not allowed");
