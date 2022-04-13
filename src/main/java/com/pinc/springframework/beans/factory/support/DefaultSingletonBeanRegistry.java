@@ -29,6 +29,14 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
         disposableBeans.put(beanName, disposableBean);
     }
 
+    /**
+     * DefaultSingletonBeanRegistry没有实现ConfigurableBeanFactory接口，
+     * 但是DefaultSingletonBeanRegistry类中却处理了ConfigurableBeanFactory接口中的destroySingleton方法，
+     * 正是因为DefaultSingletonBeanRegistry处理了destroySingleton方法，
+     * 所以当AbstractBeanFactory继承了DefaultSingletonBeanRegistry之后
+     * 就相当于实现了ConfigurableBeanFactory接口中destroySingleton的方法，
+     * 但是DefaultSingletonBeanRegistry和ConfigurableBeanFactory是完全没有关联的
+     */
     public void destroySingletons() {
         Set<String> keySet = disposableBeans.keySet();
         Object[] disposableNames = keySet.toArray();
