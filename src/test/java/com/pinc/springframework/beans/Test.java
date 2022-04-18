@@ -1,17 +1,13 @@
 package com.pinc.springframework.beans;
 
-import cn.hutool.core.io.FastByteArrayOutputStream;
 import cn.hutool.core.io.IoUtil;
 import com.pinc.springframework.beans.factory.config.BeanDefinition;
-import com.pinc.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import com.pinc.springframework.beans.factory.config.BeanReference;
 import com.pinc.springframework.beans.factory.support.DefaultListableBeanFactory;
 import com.pinc.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import com.pinc.springframework.context.support.ClassPathXmlApplicationContext;
 import com.pinc.springframework.core.io.DefaultResourceLoader;
 import com.pinc.springframework.core.io.Resource;
-import com.pinc.springframework.core.io.ResourceLoader;
-import org.junit.jupiter.api.BeforeAll;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,6 +85,19 @@ public class Test {
         UserService2 userService = applicationContext.getBean("userService", UserService2.class);
         String info = userService.queryUserInfo();
         System.out.println("执行结果" + info);
+
+    }
+
+    @org.junit.jupiter.api.Test
+    public void test_aware() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-aware.xml");
+        applicationContext.registryShutdownHook();
+
+        UserService3 userService = applicationContext.getBean("userService", UserService3.class);
+        String info = userService.queryUserInfo();
+        System.out.println("执行结果" + info);
+        System.out.println("ApplicationContextAware:" + userService.getApplicationContext());
+//        System.out.println("BeanFactoryAware:" + userService.getBeanFactory());
 
     }
 }
