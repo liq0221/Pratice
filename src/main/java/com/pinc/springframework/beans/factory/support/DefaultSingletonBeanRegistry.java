@@ -5,15 +5,21 @@ import com.pinc.springframework.beans.factory.DisposableBean;
 import com.pinc.springframework.beans.factory.config.SingletonBeanRegistry;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
+    /**
+     * ConcurrentHashMapbu不支持null,定义一个标志值
+     */
+    protected static final Object NULL_OBJECT = new Object();
 
-    private Map<String, Object> singletonBeans = new HashMap<>();
+    private Map<String, Object> singletonBeans = new ConcurrentHashMap<>();
 
-    private Map<String, DisposableBean> disposableBeans = new HashMap<>();
+    private Map<String, DisposableBean> disposableBeans = new LinkedHashMap<>();
 
     @Override
     public Object getSingleton(String beanName) {

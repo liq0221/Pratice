@@ -98,6 +98,30 @@ public class Test {
         System.out.println("执行结果" + info);
         System.out.println("ApplicationContextAware:" + userService.getApplicationContext());
 //        System.out.println("BeanFactoryAware:" + userService.getBeanFactory());
+    }
+
+    @org.junit.jupiter.api.Test
+    public void test_prototype() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-factoryBean.xml");
+        applicationContext.registryShutdownHook();
+
+        UserService4 userService1 = applicationContext.getBean("userService", UserService4.class);
+        UserService4 userService2 = applicationContext.getBean("userService", UserService4.class);
+        System.out.println(userService1);
+        System.out.println(userService2);
+
+        System.out.println(userService1 + "十六进制哈希:" + Integer.toHexString(userService1.hashCode()));
+
+    }
+
+    @org.junit.jupiter.api.Test
+    public void test_proxy() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-factoryBean.xml");
+        applicationContext.registryShutdownHook();
+
+        UserService4 userService = applicationContext.getBean("userService", UserService4.class);
+        System.out.println(userService.queryUserInfo());
+
 
     }
 }
