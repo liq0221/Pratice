@@ -1,12 +1,20 @@
 package com.pinc.springframework.context.support;
 
 import com.pinc.springframework.beans.BeansException;
+import com.pinc.springframework.beans.factory.BeanNameAware;
 import com.pinc.springframework.beans.factory.ConfigurableListableBeanFactory;
 import com.pinc.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import com.pinc.springframework.beans.factory.config.BeanPostProcessor;
+import com.pinc.springframework.context.ApplicationEvent;
+import com.pinc.springframework.context.ApplicationListener;
 import com.pinc.springframework.context.ConfigurableApplicationContext;
+import com.pinc.springframework.context.event.ApplicationEventMulticaster;
+import com.pinc.springframework.context.event.ContextClosedEvent;
+import com.pinc.springframework.context.event.ContextRefreshedEvent;
+import com.pinc.springframework.context.event.SimpleApplicationEventMulticaster;
 import com.pinc.springframework.core.io.DefaultResourceLoader;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -21,28 +29,64 @@ import java.util.Map;
  */
 public abstract class AbstractApplicationContext extends DefaultResourceLoader implements ConfigurableApplicationContext {
 
+    public static final String APPLICATION_EVENT_MULTICASTER_BEAN_NAME = "applicationEventMulticaster";
+
+    private ApplicationEventMulticaster applicationEventMulticaster;
+
 
     @Override
     public void refresh() throws BeansException {
-        // 创建beanFactory,并加载beanDefinition
+        // 1.创建beanFactory,并加载beanDefinition
         refreshBeanFactory();
 
-        // 获取beanFactory
+        // 2.获取beanFactory
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 
-        // 加入ApplicationContextAwarePostProcessor,让所有实现ApplicationContextAware接口的
+        // 3.加入ApplicationContextAwarePostProcessor,让所有实现ApplicationContextAware接口的
         // bean对象都能感知到属的applicationContext
         beanFactory.addBeanPostProcessors(new ApplicationContextAwarePostProcessor(this));
 
-        // 在实例化bean之前 执行beanFactoryPostProcessor
+        // 4.在实例化bean之前 执行beanFactoryPostProcessor
         invokeBeanFactoryPostProcessor(beanFactory);
 
-        // beanPostProcessor需要提前于其他bean对象实例化之前执行注册操作
+        // 5.beanPostProcessor需要提前于其他bean对象实例化之前执行注册操作
         registryBeanPostProcessors(beanFactory);
 
-        // 提前实例化bean对象
+        // 6.初始化事件发布者
+        initApplicationEventMulticaster();
+
+        // 7.注册事件监听器
+        registryListeners();
+
+        // 8.提前实例化bean对象
         beanFactory.preInstantiateSingletons();
+
+        // 9.发布容器刷新事件
+        finishRefresh();
     }
+
+    private void initApplicationEventMulticaster() {
+        ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+        applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
+        beanFactory.registrySingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, applicationEventMulticaster);
+    }
+
+    private void registryListeners() {
+        Collection<ApplicationListener> applicationListeners = getBeansOfType(ApplicationListener.class).values();
+        for (ApplicationListener<ApplicationEvent> listener : applicationListeners) {
+            applicationEventMulticaster.addApplicationListener(listener);
+        }
+    }
+
+    private void finishRefresh() {
+        publishEvent(new ContextRefreshedEvent(this));
+    }
+
+    @Override
+    public void publishEvent(ApplicationEvent event) {
+        applicationEventMulticaster.multicastEvent(event);
+    }
+
 
     private void registryBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
         Map<String, BeanPostProcessor> beanPostProcessorMap = beanFactory.getBeansOfType(BeanPostProcessor.class);
@@ -95,6 +139,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 
     @Override
     public void close() {
+        // 发布容器关闭事件
+        publishEvent(new ContextClosedEvent(this));
+        // 执行销毁单例bean方法
         getBeanFactory().destroySingletons();
     }
 }
