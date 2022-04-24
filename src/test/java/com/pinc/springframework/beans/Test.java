@@ -1,6 +1,7 @@
 package com.pinc.springframework.beans;
 
 import cn.hutool.core.io.IoUtil;
+import com.pinc.springframework.beans.event.CustomerEvent;
 import com.pinc.springframework.beans.factory.config.BeanDefinition;
 import com.pinc.springframework.beans.factory.config.BeanReference;
 import com.pinc.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -121,6 +122,14 @@ public class Test {
 
         UserService4 userService = applicationContext.getBean("userService", UserService4.class);
         System.out.println(userService.queryUserInfo());
+    }
+
+    @org.junit.jupiter.api.Test
+    public void test_event() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-event.xml");
+        applicationContext.publishEvent(new CustomerEvent(applicationContext, 111110000L, "频传"));
+
+        applicationContext.registryShutdownHook();
 
 
     }
