@@ -1,6 +1,11 @@
 package com.pinc.springframework.beans;
 
 import cn.hutool.core.io.IoUtil;
+import com.pinc.springframework.aop.AdvisedSupport;
+import com.pinc.springframework.aop.TargetSource;
+import com.pinc.springframework.aop.aspectj.AspectJExpressionPointCut;
+import com.pinc.springframework.aop.framework.Cglib2AopProxy;
+import com.pinc.springframework.aop.framework.JdkDynamicAopProxy;
 import com.pinc.springframework.beans.event.CustomerEvent;
 import com.pinc.springframework.beans.factory.config.BeanDefinition;
 import com.pinc.springframework.beans.factory.config.BeanReference;
@@ -130,7 +135,25 @@ public class Test {
         applicationContext.publishEvent(new CustomerEvent(applicationContext, 111110000L, "频传"));
 
         applicationContext.registryShutdownHook();
+    }
 
+    @org.junit.jupiter.api.Test
+    public void test_dynamic() {
+        // 目标对象
+        IUserService userService = new UserService5();
+        // 组装代理信息
+        AdvisedSupport advisedSupport = new AdvisedSupport();
+        advisedSupport.setMethodInterceptor(new UserInfoInterceptor());
+        advisedSupport.setTargetSource(new TargetSource(userService));
+        advisedSupport.setMethodMatcher(new AspectJExpressionPointCut(
+                "execution(* com.pinc.springframework.beans.IUserService.*(..))"));
+
+        IUserService jdkDynamicAopProxy = (IUserService) new JdkDynamicAopProxy(advisedSupport).getProxy();
+        System.out.println("测试结果:" + jdkDynamicAopProxy.queryUserInfo());
+
+        IUserService cglibAopProxy = (IUserService) new Cglib2AopProxy(advisedSupport).getProxy();
+        System.out.println("测试结果:" + cglibAopProxy.register("频传"));
 
     }
+    
 }

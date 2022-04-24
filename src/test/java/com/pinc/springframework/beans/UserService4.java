@@ -13,7 +13,7 @@ public class UserService4 {
     private IUserDao userDao;
 
     public String queryUserInfo() {
-        return userDao.queryUserName(uId) + "," + company + "," + location;
+        return userDao.queryUserName(uId) + "," + company + "," + location + userDao.queryUserName(uId, company);
     }
 
     public String getuId() {
