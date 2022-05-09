@@ -1,8 +1,11 @@
 package com.pinc.springframework.beans;
 
+import com.pinc.springframework.context.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Component("userDao")
 public class UserDao {
 
     private static Map<String, String> hashMap = new HashMap<>();

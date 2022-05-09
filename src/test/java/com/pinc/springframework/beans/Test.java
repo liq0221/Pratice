@@ -3,7 +3,7 @@ package com.pinc.springframework.beans;
 import cn.hutool.core.io.IoUtil;
 import com.pinc.springframework.aop.AdvisedSupport;
 import com.pinc.springframework.aop.TargetSource;
-import com.pinc.springframework.aop.aspectj.AspectJExpressionPointCut;
+import com.pinc.springframework.aop.aspectj.AspectJExpressionPointcut;
 import com.pinc.springframework.aop.framework.Cglib2AopProxy;
 import com.pinc.springframework.aop.framework.JdkDynamicAopProxy;
 import com.pinc.springframework.beans.event.CustomerEvent;
@@ -145,7 +145,7 @@ public class Test {
         AdvisedSupport advisedSupport = new AdvisedSupport();
         advisedSupport.setMethodInterceptor(new UserInfoInterceptor());
         advisedSupport.setTargetSource(new TargetSource(userService));
-        advisedSupport.setMethodMatcher(new AspectJExpressionPointCut(
+        advisedSupport.setMethodMatcher(new AspectJExpressionPointcut(
                 "execution(* com.pinc.springframework.beans.IUserService.*(..))"));
 
         IUserService jdkDynamicAopProxy = (IUserService) new JdkDynamicAopProxy(advisedSupport).getProxy();
@@ -155,5 +155,28 @@ public class Test {
         System.out.println("测试结果:" + cglibAopProxy.register("频传"));
 
     }
-    
+
+    @org.junit.jupiter.api.Test
+    public void test_aop() {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring-aop.xml");
+        IUserService userService = context.getBean("userService", IUserService.class);
+        System.out.println(userService.queryUserInfo());
+
+    }
+
+    @org.junit.jupiter.api.Test
+    public void test_token() {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring-token.xml");
+        IUserService userService = context.getBean("userService", IUserService.class);
+        System.out.println(userService);
+
+    }
+
+    @org.junit.jupiter.api.Test
+    public void test_scan() {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring-scan.xml");
+        IUserService userService = context.getBean("userService7", IUserService.class);
+        System.out.println(userService.queryUserInfo());
+
+    }
 }

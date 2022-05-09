@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+
+
+    <bean class="com.pinc.springframework.beans.factory.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:application.properties" />
+    </bean>
+    <bean id="userService" class="com.pinc.springframework.beans.UserService6">
+        <property name="token" value="${token}" />
+    </bean>
+
+
+</beans>

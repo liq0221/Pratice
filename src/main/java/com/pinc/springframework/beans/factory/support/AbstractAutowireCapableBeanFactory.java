@@ -6,10 +6,7 @@ import com.pinc.springframework.beans.BeansException;
 import com.pinc.springframework.beans.PropertyValue;
 import com.pinc.springframework.beans.PropertyValues;
 import com.pinc.springframework.beans.factory.*;
-import com.pinc.springframework.beans.factory.config.AutoWireCapableBeanFactory;
-import com.pinc.springframework.beans.factory.config.BeanDefinition;
-import com.pinc.springframework.beans.factory.config.BeanPostProcessor;
-import com.pinc.springframework.beans.factory.config.BeanReference;
+import com.pinc.springframework.beans.factory.config.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -27,7 +24,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) throws BeansException {
         Object bean = null;
         try {
+          // 判断是否返回代理bean对象
+          bean = resolveBeforeInstantiation(beanName, beanDefinition);
+          if (null != bean) {
+              return bean;
+          }
           bean = createBeanInstance(beanDefinition, beanName, args);
+          applyBeanPostProcessorBeforeApplyingPropertyValues(beanName, bean, beanDefinition);
           // 给bean填充属性
           applyBeanPropertyValues(beanName, bean, beanDefinition);
           // 执行bean的初始化方法和beanPostProcessor前置和后置方法
@@ -41,6 +44,46 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             addSingleton(beanName, bean);
         }
         return bean;
+    }
+
+    /**
+     * 在设置bean属性之前，允许beanPostProcessor修改属性值
+     * @param beanName
+     * @param bean
+     * @param beanDefinition
+     */
+    protected void applyBeanPostProcessorBeforeApplyingPropertyValues(String beanName, Object bean, BeanDefinition beanDefinition) {
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                PropertyValues pvs = ((InstantiationAwareBeanPostProcessor) beanPostProcessor)
+                        .postProcessPropertyValues(beanDefinition.getPropertyValues(), bean, beanName);
+                if (null != pvs) {
+                    for (PropertyValue propertyValue : pvs.getPropertyValues()) {
+                        beanDefinition.getPropertyValues().addPropertyValue(propertyValue);
+                    }
+                }
+            }
+        }
+    }
+
+    protected Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) {
+        Object bean = applyBeanPostProcessorsBeforeInstantiation(beanDefinition.getBeanClass(), beanName);
+        if (null != bean) {
+            bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
+        }
+        return bean;
+    }
+
+    protected Object applyBeanPostProcessorsBeforeInstantiation(Class beanClass, String beanName) {
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                Object result = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessBeforeInitialization(beanClass, beanName);
+                if (null != result) {
+                    return result;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -77,7 +120,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             }
         }
 
-        Object wrappedBean = applyBeanPostProcessorBeforeInitialization(bean, beanName);
+        Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
 
         // 处理init-method或者实现InitializingBean接口的afterPropertiesSet()方法
         try {
@@ -86,7 +129,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throw new BeansException("Invocation of init method of bean [" + beanName + "] failed.", e);
         }
 
-        wrappedBean = applyBeanPostProcessorAfterInitialization(bean, beanName);
+        wrappedBean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
 
         return wrappedBean;
     }
@@ -150,7 +193,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     @Override
-    public Object applyBeanPostProcessorBeforeInitialization(Object bean, String beanName) throws BeansException {
+    public Object applyBeanPostProcessorsBeforeInitialization(Object bean, String beanName) throws BeansException {
         Object result = bean;
 
         List<BeanPostProcessor> beanPostProcessors = getBeanPostProcessors();
@@ -165,7 +208,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     @Override
-    public Object applyBeanPostProcessorAfterInitialization(Object bean, String beanName) throws BeansException {
+    public Object applyBeanPostProcessorsAfterInitialization(Object bean, String beanName) throws BeansException {
         Object result = bean;
         List<BeanPostProcessor> beanPostProcessors = getBeanPostProcessors();
         for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {

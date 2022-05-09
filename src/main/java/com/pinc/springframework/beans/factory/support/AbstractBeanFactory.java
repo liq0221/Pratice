@@ -7,6 +7,7 @@ import com.pinc.springframework.beans.factory.config.BeanDefinition;
 import com.pinc.springframework.beans.factory.config.BeanPostProcessor;
 import com.pinc.springframework.beans.factory.config.ConfigurableBeanFactory;
 import com.pinc.springframework.utils.ClassUtils;
+import com.pinc.springframework.utils.StringValueResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     private List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
     private ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
+
+    private List<StringValueResolver> embeddedValueResolvers = new ArrayList<>();
 
 
     @Override
@@ -82,6 +85,20 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     public void addBeanPostProcessors(BeanPostProcessor beanPostProcessor) {
         this.beanPostProcessors.remove(beanPostProcessor);
         this.beanPostProcessors.add(beanPostProcessor);
+    }
+
+    @Override
+    public void addEmbeddedValueResolver(StringValueResolver stringValueResolver) {
+        embeddedValueResolvers.add(stringValueResolver);
+    }
+
+    @Override
+    public String resolveEmbeddedValue(String value) {
+        String result = value;
+        for (StringValueResolver embeddedValueResolver : this.embeddedValueResolvers) {
+            result = embeddedValueResolver.resolveStringValue(result);
+        }
+        return result;
     }
 
     public List<BeanPostProcessor> getBeanPostProcessors() {
