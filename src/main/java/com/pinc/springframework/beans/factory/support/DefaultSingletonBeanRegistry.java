@@ -2,6 +2,7 @@ package com.pinc.springframework.beans.factory.support;
 
 import com.pinc.springframework.beans.BeansException;
 import com.pinc.springframework.beans.factory.DisposableBean;
+import com.pinc.springframework.beans.factory.ObjectFactory;
 import com.pinc.springframework.beans.factory.config.SingletonBeanRegistry;
 
 import java.util.HashMap;
@@ -17,18 +18,45 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
      */
     protected static final Object NULL_OBJECT = new Object();
 
-    private Map<String, Object> singletonBeans = new ConcurrentHashMap<>();
+    // 一级缓存 普通对象
+    private Map<String, Object> singletonObjects = new ConcurrentHashMap<>();
+
+    // 二级缓存 提前暴露的对象，没有完全实例化的对象
+    private final Map<String, Object> earlySingletonObjects = new HashMap<>();
+
+    // 三级缓存 代理对象
+    private final Map<String, ObjectFactory<?>> singletonFactories = new ConcurrentHashMap<>();
 
     private Map<String, DisposableBean> disposableBeans = new LinkedHashMap<>();
 
     @Override
     public Object getSingleton(String beanName) {
-        return singletonBeans.get(beanName);
+        Object singletonObject = singletonObjects.get(beanName);
+        if (null == singletonObject) {
+            singletonObject = earlySingletonObjects.get(beanName);
+            if (null == singletonObject) {
+                ObjectFactory<?> singletonFactory = singletonFactories.get(beanName);
+                if (null != singletonFactory) {
+                    singletonObject = singletonFactory.getObject();
+                    earlySingletonObjects.put(beanName, singletonObject);
+                    singletonFactories.remove(beanName);
+                }
+            }
+        }
+        return singletonObject;
+    }
+    @Override
+    public void registerSingleton(String beanName, Object singletonObject) {
+        singletonObjects.put(beanName, singletonObject);
+        earlySingletonObjects.remove(beanName);
+        singletonFactories.remove(beanName);
     }
 
-    // protected修饰的属性/方法，只能被类内和子类调用
-    protected void addSingleton(String beanName, Object singletonObject) {
-        singletonBeans.put(beanName, singletonObject);
+    protected void addSingletonFactory(String beanName, ObjectFactory<?> objectFactory) {
+        if (!this.singletonObjects.containsKey(beanName)) {
+            this.singletonFactories.put(beanName, objectFactory);
+            this.earlySingletonObjects.remove(beanName);
+        }
     }
 
     protected void registryDisposableBean(String beanName, DisposableBean disposableBean) {
@@ -55,10 +83,5 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
                 throw new BeansException("Destroy method on bean with name '" + beanName + "' threw an exception", e);
             }
         }
-    }
-
-    @Override
-    public void registrySingleton(String beanName, Object singletonObject) {
-        singletonBeans.put(beanName, singletonObject);
     }
 }

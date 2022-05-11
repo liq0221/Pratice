@@ -12,7 +12,7 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor{
      * @return
      * @throws BeansException
      */
-    Object postProcessBeforeInitialization(Class<?> beanClass, String beanName) throws BeansException;
+    Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException;
 
     /**
      * 进行属性的提取和设置
@@ -23,4 +23,10 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor{
      * @throws BeansException
      */
     PropertyValues postProcessPropertyValues(PropertyValues propertyValues, Object bean, String beanName) throws BeansException;
+
+    default Object getEarlyBeanReference(Object bean, String beanName) {
+        return bean;
+    }
+
+    boolean postProcessAfterInstantiation(String name, Object bean);
 }

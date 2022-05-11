@@ -1,7 +1,6 @@
 package com.pinc.springframework.context.support;
 
 import com.pinc.springframework.beans.BeansException;
-import com.pinc.springframework.beans.factory.BeanNameAware;
 import com.pinc.springframework.beans.factory.ConfigurableListableBeanFactory;
 import com.pinc.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import com.pinc.springframework.beans.factory.config.BeanPostProcessor;
@@ -68,7 +67,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
     private void initApplicationEventMulticaster() {
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
         applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
-        beanFactory.registrySingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, applicationEventMulticaster);
+        beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, applicationEventMulticaster);
     }
 
     private void registryListeners() {

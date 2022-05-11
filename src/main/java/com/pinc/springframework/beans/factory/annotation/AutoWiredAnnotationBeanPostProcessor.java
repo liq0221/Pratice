@@ -58,6 +58,17 @@ public class AutoWiredAnnotationBeanPostProcessor implements BeanFactoryAware, I
         return propertyValues;
     }
 
+
+    @Override
+    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+        return null;
+    }
+
+    @Override
+    public boolean postProcessAfterInstantiation(String name, Object bean) {
+        return true;
+    }
+
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         return null;
@@ -65,11 +76,6 @@ public class AutoWiredAnnotationBeanPostProcessor implements BeanFactoryAware, I
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return null;
-    }
-
-    @Override
-    public Object postProcessBeforeInitialization(Class<?> beanClass, String beanName) throws BeansException {
         return null;
     }
 }
