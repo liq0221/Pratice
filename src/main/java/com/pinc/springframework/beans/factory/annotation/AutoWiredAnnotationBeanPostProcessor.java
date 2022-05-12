@@ -1,12 +1,14 @@
 package com.pinc.springframework.beans.factory.annotation;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.TypeUtil;
 import com.pinc.springframework.beans.BeansException;
 import com.pinc.springframework.beans.PropertyValues;
 import com.pinc.springframework.beans.factory.BeanFactory;
 import com.pinc.springframework.beans.factory.BeanFactoryAware;
 import com.pinc.springframework.beans.factory.ConfigurableListableBeanFactory;
 import com.pinc.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
+import com.pinc.springframework.core.convert.ConversionService;
 import com.pinc.springframework.utils.ClassUtils;
 
 import java.lang.reflect.Field;
@@ -30,8 +32,17 @@ public class AutoWiredAnnotationBeanPostProcessor implements BeanFactoryAware, I
         for (Field declaredField : declaredFields) {
             Value valueAnnotation = declaredField.getAnnotation(Value.class);
             if (null != valueAnnotation) {
-                String value = valueAnnotation.value();
-                value = beanFactory.resolveEmbeddedValue(value);
+                Object value = valueAnnotation.value();
+                value = beanFactory.resolveEmbeddedValue((String)value);
+
+                Class<?> sourceType = value.getClass();
+                Class<?> targetType = (Class<?>) TypeUtil.getType(declaredField);
+                ConversionService conversionService = beanFactory.getConversionService();
+                if (conversionService != null) {
+                    if (conversionService.canConvert(sourceType, targetType)) {
+                        value = conversionService.convert(value, targetType);
+                    }
+                }
                 BeanUtil.setFieldValue(bean, declaredField.getName(), value);
             }
         }

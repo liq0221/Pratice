@@ -12,6 +12,8 @@ import com.pinc.springframework.beans.factory.config.BeanReference;
 import com.pinc.springframework.beans.factory.support.DefaultListableBeanFactory;
 import com.pinc.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import com.pinc.springframework.context.support.ClassPathXmlApplicationContext;
+import com.pinc.springframework.core.convert.converter.Converter;
+import com.pinc.springframework.core.convert.support.StringToNumberConverterFactory;
 import com.pinc.springframework.core.io.DefaultResourceLoader;
 import com.pinc.springframework.core.io.Resource;
 
@@ -186,5 +188,23 @@ public class Test {
         Wife wife = applicationContext.getBean("wife", Wife.class);
         System.out.println("老公的媳妇：" + husband.queryWife());
         System.out.println("媳妇的老公：" + wife.queryHusband());
+    }
+
+    @org.junit.jupiter.api.Test
+    public void test_convert() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-convert.xml");
+        FormatHusband husband = applicationContext.getBean("husband", FormatHusband.class);
+        System.out.println("测试结果：" + husband);
+    }
+
+    @org.junit.jupiter.api.Test
+    public void test_StringToNumberConverterFactory() {
+        StringToNumberConverterFactory converterFactory = new StringToNumberConverterFactory();
+
+        Converter<String, Integer> stringToIntegerConverter = converterFactory.getConverter(Integer.class);
+        System.out.println("测试结果：" + stringToIntegerConverter.convert("1234"));
+
+        Converter<String, Long> stringToLongConverter = converterFactory.getConverter(Long.class);
+        System.out.println("测试结果：" + stringToLongConverter.convert("1234"));
     }
 }
